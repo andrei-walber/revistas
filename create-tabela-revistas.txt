@@ -1,0 +1,27 @@
+CREATE TABLE rv_revistas (
+    id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nome varchar(255),
+    area_escopo varchar(255),
+    localizacao varchar(2),
+    qualis varchar(2),
+    status varchar(7),
+    tempo_medio_aceitacao int,
+    imagem blob,
+    instituicao varchar(255),
+    site varchar(255),
+    email_contato varchar(255),
+    periodicidade varchar(255),
+    num_artigos_publicados int,
+    dossie_especial varchar(255),
+    prazo_edital date,
+    custo_subm_publicacao decimal(6,2)
+);
+
+INSERT INTO rv_revistas (nome, area_escopo, localizacao, qualis, status, tempo_medio_aceitacao)
+VALUES 
+	('REVISTA DA FACULDADE DE DIREITO DA UFMG', 'INSTITUCIONAL', 'MG', 'C', 'ABERTO', 123),
+    ('REVISTA DIREITO GV', 'INSTITUCIONAL', 'SP', 'A1', 'ABERTO', 321),
+    ('REVISTA DIREITO E PRAXIS', 'TEORIA DO DIREITO, FILOSOFIA DO DIREITO,  SOCIOLOGIA JURÍDICA, FILOSOFIA POLÍTICA, ESTUDOS CRÍTICOS', 'RJ', 'A1', 'FECHADO', 190),
+    ('CADERNOS PAGU', 'ESTUDOS DE GÊNERO', 'SP', 'B2', 'FECHADO', 50),
+    ('CIVITAS - REVISTA DE CIÊNCIAS SOCIAIS', 'CIÊNCIAS SOCIAIS', 'RS', 'B1', 'ABERTO', 90),
+    ('DOXA (ALICANTE)', 'FILOSOFIA DO DIREITO', 'RS', 'A2', 'FECHADO', 30);
