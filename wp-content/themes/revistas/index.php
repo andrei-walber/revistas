@@ -22,7 +22,12 @@
 
         <h2 style="text-align: center">Lista Revistas Acadêmicas</h2>
 
-        <select name="multi_search_filter" id="multi_search_filter" class="form-control selectpicker" multiple>
+        <h6>Nome</h6>
+        <input type="text" name="nome_revista" id="nome_revista"><br><br>
+
+        <!------------------------------------------------------------------------------------------------------------>
+        <h6>Área/Escopo</h6>
+        <select name="multi_search_area_escopo" id="multi_search_area_escopo" class="form-control selectpicker" multiple>
             <?php
             include('dbcon.php');
 
@@ -33,6 +38,52 @@
             }
             ?>
         </select>
+        <input type="hidden" name="hidden_area_escopo" id="hidden_area_escopo"><br><br>
+
+        <!-------------------------------------------------------------------------------------------------------------->
+        <h6>Localização</h6>
+        <select name="multi_search_localizacao" id="multi_search_localizacao" class="form-control selectpicker" multiple>
+            <?php
+            include('dbcon.php');
+
+            $query = $mysql->query("SELECT DISTINCT sigla FROM rv_estados ORDER BY sigla ASC");
+            while ($row = $query->fetch_object()) {
+                $localizacao = $row->sigla;
+                echo '<option value="' . $localizacao . '">' . $localizacao . '</option>';
+            }
+            ?>
+        </select>
+        <input type="hidden" name="hidden_localizacao" id="hidden_localizacao"><br><br>
+
+        <!-------------------------------------------------------------------------------------------------------------->
+        <h6>Qualis</h6>
+        <select name="multi_search_localizacao" id="multi_search_localizacao" class="form-control selectpicker" multiple>
+            <?php
+            include('dbcon.php');
+
+            $query = $mysql->query("SELECT DISTINCT qualis FROM rv_qualis ORDER BY qualis ASC");
+            while ($row = $query->fetch_object()) {
+                $qualis = $row->qualis;
+                echo '<option value="' . $qualis . '">' . $qualis . '</option>';
+            }
+            ?>
+        </select>
+        <input type="hidden" name="hidden_qualis" id="hidden_qualis"><br><br>
+
+        <!-------------------------------------------------------------------------------------------------------------->
+        <h6>Status</h6>
+        <select name="multi_search_status" id="multi_search_status" class="form-control selectpicker" multiple>
+            <?php
+            include('dbcon.php');
+
+            $query = $mysql->query("SELECT DISTINCT status FROM rv_revistas ORDER BY status ASC");
+            while ($row = $query->fetch_object()) {
+                $status = $row->status;
+                echo '<option value="' . $status . '">' . $status . '</option>';
+            }
+            ?>
+        </select>
+        <input type="hidden" name="hidden_status" id="hidden_status"><br><br>
 
         <div style="clear:both"></div>
         <br>
@@ -55,20 +106,48 @@
 
     <script>
         $(document).ready(function() {
-            load_data()
+            let query_universal = "SELECT * FROM rv_revistas WHERE 1"
+
+            $('#nome_revista').change(function() {
+                load_data()
+            })
+
+            $('#multi_search_area_escopo').change(function() {
+                load_data()
+            })
+
+            $('#multi_search_localizacao').change(function() {
+                load_data()
+            })
+
+            $('#multi_search_qualis').change(function() {
+                load_data()
+            })
+
+            $('#multi_search_status').change(function() {
+                load_data()
+            })
 
             function load_data(query = '') {
+                if ($('#multi_search_area_escopo').val() != null) {
+                    $('#hidden_area_escopo').val($('#multi_search_area_escopo').val())
+                    let query = $('#hidden_area_escopo').val()
+                    console.log(query)
+                }
+
                 $.ajax({
                     url: "wp-content/themes/revistas/fetch.php",
                     method: "POST",
                     data: {
-                        query: query
+                        query: query_universal
                     },
                     success: function(data) {
                         $('tbody').html(data)
                     }
                 })
             }
+
+            load_data(query_universal)
         })
     </script>
 </body>

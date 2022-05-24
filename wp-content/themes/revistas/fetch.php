@@ -1,7 +1,7 @@
 <?php
 include('dbcon.php');
 
-$query = $mysql->query("SELECT * FROM rv_revistas ORDER BY id DESC");
+$query = $mysql->query($_POST["query"]);
 $total_row = mysqli_num_rows($query);
 
 $output = '';
@@ -21,7 +21,7 @@ if ($total_row > 0) {
 } else {
     $output .= '
         <tr>
-            <td colspan="6">Nenhuma revista encontrada!</td>
+            <td colspan="6" style="text-align: center">Nenhuma revista encontrada!</td>
         <tr>';
 }
 
