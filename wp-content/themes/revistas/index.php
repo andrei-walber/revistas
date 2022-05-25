@@ -18,15 +18,13 @@
 
 <body>
     <div class="container">
-        <br>
-
         <h2 style="text-align: center">Lista Revistas Acadêmicas</h2>
 
-        <h6>Nome</h6>
-        <input type="text" name="nome_revista" id="nome_revista"><br><br>
+        <h5>Nome</h5>
+        <input type="text" name="nome_revista" id="nome_revista">
 
         <!------------------------------------------------------------------------------------------------------------>
-        <h6>Área/Escopo</h6>
+        <h5>Área/Escopo</h5>
         <select name="multi_search_area_escopo" id="multi_search_area_escopo" class="form-control selectpicker" multiple>
             <?php
             include('dbcon.php');
@@ -38,10 +36,9 @@
             }
             ?>
         </select>
-        <input type="hidden" name="hidden_area_escopo" id="hidden_area_escopo"><br><br>
 
         <!-------------------------------------------------------------------------------------------------------------->
-        <h6>Localização</h6>
+        <h5>Localização</h5>
         <select name="multi_search_localizacao" id="multi_search_localizacao" class="form-control selectpicker" multiple>
             <?php
             include('dbcon.php');
@@ -53,11 +50,10 @@
             }
             ?>
         </select>
-        <input type="hidden" name="hidden_localizacao" id="hidden_localizacao"><br><br>
 
         <!-------------------------------------------------------------------------------------------------------------->
-        <h6>Qualis</h6>
-        <select name="multi_search_localizacao" id="multi_search_localizacao" class="form-control selectpicker" multiple>
+        <h5>Qualis</h5>
+        <select name="multi_search_qualis" id="multi_search_qualis" class="form-control selectpicker" multiple>
             <?php
             include('dbcon.php');
 
@@ -68,10 +64,9 @@
             }
             ?>
         </select>
-        <input type="hidden" name="hidden_qualis" id="hidden_qualis"><br><br>
 
         <!-------------------------------------------------------------------------------------------------------------->
-        <h6>Status</h6>
+        <h5>Status</h5>
         <select name="multi_search_status" id="multi_search_status" class="form-control selectpicker" multiple>
             <?php
             include('dbcon.php');
@@ -82,11 +77,7 @@
                 echo '<option value="' . $status . '">' . $status . '</option>';
             }
             ?>
-        </select>
-        <input type="hidden" name="hidden_status" id="hidden_status"><br><br>
-
-        <div style="clear:both"></div>
-        <br>
+        </select><br><br>
 
         <div class="table-responsive">
             <table class="table table-striped table-bordered">
@@ -106,7 +97,7 @@
 
     <script>
         $(document).ready(function() {
-            let query_universal = "SELECT * FROM rv_revistas WHERE 1"
+            load_data()
 
             $('#nome_revista').change(function() {
                 load_data()
@@ -128,13 +119,75 @@
                 load_data()
             })
 
-            function load_data(query = '') {
-                if ($('#multi_search_area_escopo').val() != null) {
-                    $('#hidden_area_escopo').val($('#multi_search_area_escopo').val())
-                    let query = $('#hidden_area_escopo').val()
-                    console.log(query)
+            function load_data() {
+                let query_universal = "SELECT * FROM rv_revistas WHERE 1"
+
+                if ($('#nome_revista').val() != '') {
+                    query_universal = query_universal + " AND nome LIKE '%" + $('#nome_revista').val() + "%'"
                 }
 
+                if ($('#multi_search_localizacao').val() != null) {
+                    query_universal = query_universal + " AND localizacao in ("
+
+                    let localizacao_selecionada = $('#multi_search_localizacao').val()
+                    for (let i = 0; i < localizacao_selecionada.length; i++) {
+                        if (i == localizacao_selecionada.length - 1) {
+                            query_universal = query_universal + '"' + localizacao_selecionada[i] + '"'
+                        } else {
+                            query_universal = query_universal + '"' + localizacao_selecionada[i] + '",'
+                        }
+                    }
+
+                    query_universal = query_universal + ")"
+                }
+
+                if ($('#multi_search_qualis').val() != null) {
+                    query_universal = query_universal + " AND qualis in ("
+
+                    let qualis_selecionada = $('#multi_search_qualis').val()
+                    for (let i = 0; i < qualis_selecionada.length; i++) {
+                        if (i == qualis_selecionada.length - 1) {
+                            query_universal = query_universal + '"' + qualis_selecionada[i] + '"'
+                        } else {
+                            query_universal = query_universal + '"' + qualis_selecionada[i] + '",'
+                        }
+                    }
+
+                    query_universal = query_universal + ")"
+                }
+
+                if ($('#multi_search_status').val() != null) {
+                    query_universal = query_universal + " AND status in ("
+
+                    let status_selecionada = $('#multi_search_status').val()
+                    for (let i = 0; i < status_selecionada.length; i++) {
+                        if (i == status_selecionada.length - 1) {
+                            query_universal = query_universal + '"' + status_selecionada[i] + '"'
+                        } else {
+                            query_universal = query_universal + '"' + status_selecionada[i] + '",'
+                        }
+                    }
+
+                    query_universal = query_universal + ")"
+                }
+
+                if ($('#multi_search_area_escopo').val() != null) {
+                    query_universal = query_universal + " AND ("
+
+                    let area_escopo_selecionada = $('#multi_search_area_escopo').val()
+                    for (let i = 0; i < area_escopo_selecionada.length; i++) {
+                        if (i == area_escopo_selecionada.length - 1) {
+                            query_universal = query_universal + "area_escopo LIKE '%" + area_escopo_selecionada[i] + "%'"
+                        } else {
+                            query_universal = query_universal + "area_escopo LIKE '%" + area_escopo_selecionada[i] + "%' OR "
+                        }
+                    }
+
+                    query_universal = query_universal + " OR area_escopo LIKE '%institucional%')"
+                }
+
+                query_universal = query_universal + " ORDER BY qualis ASC, tempo_medio_aceitacao ASC"
+                console.log(query_universal)
                 $.ajax({
                     url: "wp-content/themes/revistas/fetch.php",
                     method: "POST",
@@ -146,8 +199,6 @@
                     }
                 })
             }
-
-            load_data(query_universal)
         })
     </script>
 </body>
